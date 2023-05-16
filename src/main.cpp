@@ -8,7 +8,6 @@
 #include <czmq.h>
 #include "libuvc/libuvc.h"
 #include <argparse/argparse.hpp>
-
 // ----------------------------------------------------------------------------
 static void* frame_sock_raw;
 static int s_interrupted = 0;
@@ -19,40 +18,48 @@ static void s_signal_handler(int signal_value);
 void cb(uvc_frame_t* frame, void* ptr)
 {
   // ...
-  uvc_frame_t* bgr;
   uvc_error_t ret;
+  uvc_frame_t* rgb;
 
   // ...
-  bgr = uvc_allocate_frame(frame->width * frame->height * 3);
-  if(bgr == NULL)
+  rgb = uvc_allocate_frame(frame->width * frame->height * 3);
+  if(rgb == NULL)
   {
-    printf("unable to allocate bgr frame!\n");
+    printf("unable to allocate rgb frame!\n");
     return;
   }
 
-  // ...
-  const uvc_frame_format format = frame->frame_format;
-  const int32_t width = frame->width;
-  const int32_t height = frame->height;
-  const int32_t data_bytes = frame->width * frame->height * 3;
-
-  // ...
-  ret = uvc_any2bgr(frame, bgr);
-  if(ret)
+  if(frame->frame_format == UVC_COLOR_FORMAT_MJPEG)
   {
-    uvc_perror(ret, "uvc_any2bgr");
-    uvc_free_frame(bgr);
-    return;
+    ret = uvc_mjpeg2rgb(frame, rgb);
+    if(ret)
+    {
+      uvc_perror(ret, "uvc_mjpeg2rgb");
+      uvc_free_frame(rgb);
+      return;
+    }
+  }
+  else
+  {
+    ret = uvc_any2rgb(frame, rgb);
+    if(ret)
+    {
+      uvc_perror(ret, "uvc_any2rgb");
+      uvc_free_frame(rgb);
+      return;
+    }
   }
 
   // ...
   zmq_send(
-    frame_sock_raw, bgr->data,
-    data_bytes, ZMQ_DONTWAIT
+    frame_sock_raw,
+    rgb->data,
+    frame->width * frame->height * 3,
+    ZMQ_DONTWAIT
   );
 
   // ...
-  uvc_free_frame(bgr);
+  uvc_free_frame(rgb);
 }
 
 // ----------------------------------------------------------------------------

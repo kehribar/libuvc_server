@@ -8,6 +8,7 @@
 #include <czmq.h>
 #include "libuvc/libuvc.h"
 #include <argparse/argparse.hpp>
+
 // ----------------------------------------------------------------------------
 static void* frame_sock_raw;
 static int s_interrupted = 0;

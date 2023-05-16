@@ -215,7 +215,7 @@ int main(int argc, char* argv[])
     }
 
     // ...
-    res = uvc_set_gain(devh, 1);
+    res = uvc_set_gain(devh, GAIN);
     if(res != UVC_SUCCESS)
     {
       uvc_perror(res, "uvc_set_gain");

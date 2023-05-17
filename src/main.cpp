@@ -204,32 +204,6 @@ int main(int argc, char* argv[])
     }
 
     // ...
-    const uint8_t UVC_AUTO_EXPOSURE_MODE_MANUAL = 1;
-    res = uvc_set_ae_mode(devh, UVC_AUTO_EXPOSURE_MODE_MANUAL);
-    if(res != UVC_SUCCESS)
-    {
-      uvc_perror(res, "uvc_set_ae_mode");
-      return -1;
-    }
-
-    // Each unit is 0.1 ms
-    const float EXPOSURE_MS_TO_RAW = 10.0;
-    res = uvc_set_exposure_abs(devh, EXPOSURE_MS * EXPOSURE_MS_TO_RAW);
-    if(res != UVC_SUCCESS)
-    {
-      uvc_perror(res, "uvc_set_exposure_abs");
-      return -1;
-    }
-
-    // ...
-    res = uvc_set_gain(devh, GAIN);
-    if(res != UVC_SUCCESS)
-    {
-      uvc_perror(res, "uvc_set_gain");
-      return -1;
-    }
-
-    // ...
     res = uvc_start_streaming(devh, &ctrl, cb, (void*)NULL, 0);
     if(res < 0)
     {
@@ -243,6 +217,32 @@ int main(int argc, char* argv[])
     // ...
     while(1)
     {
+      // ...
+      const uint8_t UVC_AUTO_EXPOSURE_MODE_MANUAL = 1;
+      res = uvc_set_ae_mode(devh, UVC_AUTO_EXPOSURE_MODE_MANUAL);
+      if(res != UVC_SUCCESS)
+      {
+        uvc_perror(res, "uvc_set_ae_mode");
+        return -1;
+      }
+
+      // Each unit is 0.1 ms
+      const float EXPOSURE_MS_TO_RAW = 10.0;
+      res = uvc_set_exposure_abs(devh, EXPOSURE_MS * EXPOSURE_MS_TO_RAW);
+      if(res != UVC_SUCCESS)
+      {
+        uvc_perror(res, "uvc_set_exposure_abs");
+        return -1;
+      }
+
+      // ...
+      res = uvc_set_gain(devh, GAIN);
+      if(res != UVC_SUCCESS)
+      {
+        uvc_perror(res, "uvc_set_gain");
+        return -1;
+      }
+
       usleep(1000 * 1000);
       if(s_interrupted)
       {

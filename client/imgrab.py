@@ -33,7 +33,7 @@ while True:
   dat = np.frombuffer(dat, np.uint8)
   dat = dat.reshape(HEIGHT, WIDTH, 3)
   dat = dat.transpose(1,0,2)
-  dat = dat[...,::-1].copy() # RGB ---> BGR
+  # dat = dat[...,::-1].copy() # RGB ---> BGR
 
   # Visualise
   pygame.surfarray.blit_array(camera_surface, dat)

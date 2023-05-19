@@ -125,6 +125,12 @@ int main(int argc, char* argv[])
       .default_value("");
 
     // ...
+    program.add_argument("--wb")
+      .help("White Balance, Temperature")
+      .scan<'d', int>()
+      .default_value(5070);
+
+    // ...
     program.parse_args(argc, argv);
 
     // ...
@@ -139,6 +145,9 @@ int main(int argc, char* argv[])
     // ...
     int32_t VENDOR_ID = program.get<int>("vid");
     int32_t PRODUCT_ID = program.get<int>("pid");
+
+    // ...
+    int32_t WHITE_BALANCE = program.get<int>("wb");
 
     // ...
     std::string SERIAL_NUM_STR = program.get("serial");
@@ -217,6 +226,22 @@ int main(int argc, char* argv[])
     // ...
     while(1)
     {
+      // ...
+      res = uvc_set_white_balance_temperature_auto(devh, 0);
+      if(res != UVC_SUCCESS)
+      {
+        uvc_perror(res, "uvc_set_white_balance_temperature_auto");
+        return -1;
+      }
+
+      // ...
+      res = uvc_set_white_balance_temperature(devh, WHITE_BALANCE);
+      if(res != UVC_SUCCESS)
+      {
+        uvc_perror(res, "uvc_set_white_balance_temperature");
+        return -1;
+      }
+
       // ...
       const uint8_t UVC_AUTO_EXPOSURE_MODE_MANUAL = 1;
       res = uvc_set_ae_mode(devh, UVC_AUTO_EXPOSURE_MODE_MANUAL);
